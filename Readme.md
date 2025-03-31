@@ -1,109 +1,84 @@
-# IFM
+# Turborepo starter
 
-## Overview
+This Turborepo starter is maintained by the Turborepo core team.
 
-**IFM** is a gamified programmatic ad platform designed for streamers, enabling monetization through an XP/RP (Experience/Reputation Points) system. IFM integrates with major streaming services (Twitch, YouTube, etc.) to provide real-time analytics, fraud detection, and financial tracking, all built on a microservices architecture.
+## Using this example
 
-## Key Components
+Run the following command:
 
-- **Frontend:** Built with Next.js/React for a responsive, dynamic dashboard.
-- **Backend:** Node.js-based microservices for authentication, campaign management, XP/RP tracking, and wallet/payout services.
-- **Real-Time Updates:** Implemented using WebSockets or Server-Sent Events (SSE).
-- **External Integrations:** OAuth for streaming platforms, payment gateways, and future fraud detection APIs.
-
-## Getting Started
-
-### Prerequisites
-
-- **Node.js** (v16+)
-- **Docker & Docker Compose**
-- **Git**
-
-### Setup Instructions
-
-1. **Clone the Repository:**
-
-   ```bash
-    git clone <repository-url>
-    cd IFM
-    ```
-
-1. **Install Dependencies:**
-    - **Frontend:**
-        
-        ```bash
-        cd frontend
-        npm install
-        ```
-        
-    - **Backend:**
-        
-        ```bash
-        cd ../backend
-        npm install
-        ```
-        
-2. **Configure Environment Variables:**
-    - Duplicate the `.env.example` file in both `frontend` and `backend` directories and update with your configuration (API keys, OAuth credentials, DB connection strings, etc.).
-3. **Run Locally:**
-    - **Backend:**
-        
-        ```bash
-        npm start
-        ```
-        
-    - **Frontend:**
-        
-        ```bash
-        npm run dev
-        ```
-        
-4. **Using Docker:**
-    
-    From the project root, run:
-    
-    ```bash
-    docker-compose up --build
-    ```
-    
-
-## Development Workflow
-
-- **Branching:** Use GitFlow for feature branches and maintain a clean `main` branch.
-- **Testing:** Run unit tests with Jest/Mocha; use Cypress or Selenium for end-to-end testing.
-- **CI/CD:** Automated via GitHub Actions with Docker; check pipeline status for build, test, and deployment.
-- **Code Reviews:** Follow strict code review and merge processes to ensure code quality.
-
-## Project Structure
-
-```bash 
-IFM/
-├── frontend/
-│   ├── components/
-│   ├── pages/
-│   ├── styles/
-│   └── package.json
-├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   └── middlewares/
-│   └── package.json
-├── shared/
-│   └── utils/
-├── docker-compose.yml
-└── README.md
-
+```sh
+npx create-turbo@latest
 ```
 
-## Contributing
+## What's inside?
 
-- **Code:** Follow best practices for coding and testing.
-- **Documentation:** Update documentation with any feature changes.
-- **Reviews:** Submit pull requests and ensure thorough code reviews.
+This Turborepo includes the following packages/apps:
 
-## License
+### Apps and Packages
 
-*For internal development use only.*
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm dev
+```
+
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
