@@ -2,20 +2,151 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Wallet, WalletDocument } from './wallet.schema';
+import { Model, Types } from 'mongoose';
+import { Wallet } from './wallet.schema';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { TransactionDto } from './dto/transaction.dto';
 import { v4 as uuidv4 } from 'uuid';
+// import { User } from '../users/user.schema';
 
 @Injectable()
 export class WalletService {
   constructor(
-    @InjectModel(Wallet.name) private walletModel: Model<WalletDocument>,
+    @InjectModel(Wallet.name) private walletModel: Model<Wallet>,
+    // @InjectModel(User.name) private userModel: Model<User>,
   ) {}
+
+  async createWallet(userId: string) {
+    const wallet = new this.walletModel({
+      userId: new Types.ObjectId(userId),
+      balance: 0,
+      gloCoins: 0,
+      bloCoins: 0,
+      pendingEarnings: 0,
+      stakingRewards: 0,
+      referralBonus: 0,
+      totalEarned: 0,
+      transactions: [],
+    });
+    return wallet.save();
+  }
+
+  async getWallet(userId: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+    return wallet;
+  }
+
+  async deposit(userId: string, amount: number, paymentMethod: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    const transaction = {
+      type: 'deposit',
+      amount,
+      currency: 'USD',
+      status: 'pending',
+      date: new Date(),
+      description: `Deposit of ${amount} USD via ${paymentMethod}`,
+    };
+
+    wallet.transactions.push(transaction);
+    return wallet.save();
+  }
+
+  async getTransactions(userId: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+    return wallet.transactions;
+  }
+
+  async addFunds(userId: string, amount: number, description: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    const transaction = {
+      type: 'campaign_payment',
+      amount,
+      currency: 'USD',
+      status: 'completed',
+      date: new Date(),
+      description,
+    };
+
+    wallet.balance += amount;
+    wallet.transactions.push(transaction);
+    return wallet.save();
+  }
+
+  async withdraw(userId: string, amount: number, paymentMethod: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    if (wallet.balance < amount) {
+      throw new UnauthorizedException('Insufficient funds');
+    }
+
+    const transaction = {
+      type: 'withdrawal',
+      amount,
+      currency: 'USD',
+      status: 'pending',
+      date: new Date(),
+      description: `Withdrawal of ${amount} USD via ${paymentMethod}`,
+    };
+
+    wallet.balance -= amount;
+    wallet.transactions.push(transaction);
+    return wallet.save();
+  }
+
+  async refund(userId: string, amount: number, reason: string) {
+    const wallet = await this.walletModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    const transaction = {
+      id: uuidv4(),
+      type: 'refund',
+      amount,
+      currency: 'USD',
+      status: 'completed',
+      description: `Refund of ${amount} USD: ${reason}`,
+      metadata: { refundReason: reason },
+      date: new Date(),
+    };
+
+    wallet.balance += amount;
+    wallet.transactions.push(transaction);
+    return wallet.save();
+  }
 
   async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     const existingWallet = await this.walletModel
@@ -80,10 +211,11 @@ export class WalletService {
       id: uuidv4(),
       type: transactionDto.type,
       amount: transactionDto.amount,
+      currency: 'USD',
       status: 'pending' as const,
       description: transactionDto.description,
       metadata: transactionDto.metadata || {},
-      createdAt: new Date(),
+      date: new Date(),
     };
 
     wallet.transactions.push(transaction);
@@ -127,10 +259,11 @@ export class WalletService {
       id: uuidv4(),
       type: 'refund' as const,
       amount,
+      currency: 'USD',
       status: 'completed' as const,
       description: `Refund: ${reason}`,
       metadata: { refundReason: reason },
-      createdAt: new Date(),
+      date: new Date(),
     };
 
     wallet.balance += amount;
@@ -157,12 +290,13 @@ export class WalletService {
 
     const transaction = {
       id: uuidv4(),
-      type: 'campaign_payment' as const,
+      type: 'campaign_payment',
       amount,
-      status: 'completed' as const,
+      currency: 'USD',
+      status: 'completed',
       description: `Campaign payment for campaign ${campaignId}`,
       metadata: { campaignId },
-      createdAt: new Date(),
+      date: new Date(),
     };
 
     wallet.balance -= amount;

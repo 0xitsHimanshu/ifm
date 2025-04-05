@@ -20,5 +20,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@nestjs/websockets": "^11.0.13",
+    "@types/socket.io": "^3.0.1",
+    "socket.io": "^4.8.1"
+  }
 }

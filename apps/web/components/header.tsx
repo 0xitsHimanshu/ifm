@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function Header() {
+    
   const [userStats, setUserStats] = useState({
     name: "Aarav Sharma",
     level: 1,

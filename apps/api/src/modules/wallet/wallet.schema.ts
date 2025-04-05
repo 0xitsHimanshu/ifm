@@ -7,63 +7,42 @@ export type WalletDocument = Wallet & Document;
 export class Wallet {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, ref: 'User' })
-  userId: string;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true, unique: true })
+  userId: Types.ObjectId;
 
-  @Prop({ required: true, default: 0 })
+  @Prop({ default: 0 })
   balance: number;
 
-  @Prop({ required: true, default: 'USD' })
-  currency: string;
+  @Prop({ default: 0 })
+  gloCoins: number;
+
+  @Prop({ default: 0 })
+  bloCoins: number;
+
+  @Prop({ default: 0 })
+  pendingEarnings: number;
+
+  @Prop({ default: 0 })
+  stakingRewards: number;
+
+  @Prop({ default: 0 })
+  referralBonus: number;
+
+  @Prop({ default: 0 })
+  totalEarned: number;
+
+  @Prop({ type: Date })
+  nextPayout: Date;
 
   @Prop({ type: [Object], default: [] })
   transactions: {
-    id: string;
-    type: 'deposit' | 'withdrawal' | 'campaign_payment' | 'refund';
+    type: string;
     amount: number;
-    status: 'pending' | 'completed' | 'failed';
-    description: string;
-    metadata: {
-      campaignId?: string;
-      paymentMethod?: string;
-      transactionId?: string;
-      refundReason?: string;
-    };
-    createdAt: Date;
+    currency: string;
+    status: string;
+    date: Date;
+    description?: string;
   }[];
-
-  @Prop({ type: Object })
-  paymentMethods: {
-    stripe?: {
-      customerId: string;
-      defaultPaymentMethodId?: string;
-    };
-    paypal?: {
-      email: string;
-      merchantId?: string;
-    };
-  };
-
-  @Prop({ type: Object })
-  limits: {
-    dailyWithdrawal: number;
-    monthlyWithdrawal: number;
-    minimumBalance: number;
-  };
-
-  @Prop({ type: Object })
-  settings: {
-    notifications: {
-      lowBalance: boolean;
-      transaction: boolean;
-      withdrawal: boolean;
-    };
-    autoRecharge: {
-      enabled: boolean;
-      threshold: number;
-      amount: number;
-    };
-  };
 }
 
 export const WalletSchema = SchemaFactory.createForClass(Wallet); 

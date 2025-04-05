@@ -9,73 +9,118 @@ export class User {
   _id: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
+  username: string;
+
+  @Prop({ required: true })
+  displayName: string;
+
+  @Prop({ required: true, unique: true })
   email: string;
 
   @Prop({ required: true })
   password: string;
 
-  @Prop({ required: true })
-  firstName: string;
-
-  @Prop({ required: true })
-  lastName: string;
+  @Prop()
+  avatar?: string;
 
   @Prop()
-  phoneNumber?: string;
+  coverImage?: string;
 
-  @Prop({ type: String, enum: ['user', 'admin', 'seller'], default: 'user' })
-  role: string;
+  @Prop({ maxlength: 500 })
+  bio?: string;
 
-  @Prop({ type: Object })
-  profile: {
-    avatar?: string;
-    bio?: string;
-    company?: string;
-    website?: string;
-    location?: string;
-    socialLinks?: {
-      facebook?: string;
-      twitter?: string;
-      linkedin?: string;
-      instagram?: string;
-    };
-  };
+  @Prop()
+  location?: string;
 
-  @Prop({ type: Object })
-  preferences: {
-    notifications: {
-      email: boolean;
-      push: boolean;
-      sms: boolean;
-    };
-    theme: 'light' | 'dark' | 'system';
-    language: string;
-    timezone: string;
-  };
-
-  @Prop({ type: Object })
-  wallet: {
-    balance: number;
-    currency: string;
-  };
-
-  @Prop({ default: false })
-  isEmailVerified: boolean;
-
-  @Prop({ default: false })
-  isPhoneVerified: boolean;
+  @Prop({ type: Date, default: Date.now })
+  joinDate: Date;
 
   @Prop({ type: Date })
   lastLoginAt?: Date;
 
-  @Prop({ type: [String], default: [] })
-  campaignIds: string[];
+  @Prop({ default: false })
+  verified: boolean;
+
+  @Prop({ default: 1 })
+  level: number;
+
+  @Prop({ default: 0 })
+  xps: number;
+
+  @Prop({ default: 1000 })
+  maxXps: number;
+
+  @Prop({ default: 0 })
+  rpg: number;
+
+  @Prop({ default: 0 })
+  energyPacks: number;
 
   @Prop({ type: [String], default: [] })
-  creativeIds: string[];
+  tags: string[];
+
+  @Prop({ type: Object })
+  socialLinks: {
+    twitch?: string;
+    youtube?: string;
+    instagram?: string;
+    twitter?: string;
+    facebook?: string;
+  };
+
+  @Prop({ type: [Object] })
+  streamingPlatforms: {
+    name: string;
+    username: string;
+    followers: number;
+    verified: boolean;
+    connected: boolean;
+  }[];
+
+  @Prop({ type: [Object] })
+  achievements: {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    date: Date;
+  }[];
 
   @Prop({ type: [String], default: [] })
-  marketplaceIds: string[];
+  groups: string[];
+
+  @Prop({ type: [String], default: [] })
+  geekeys: string[];
+
+  @Prop({ type: Object })
+  wallet: {
+    gloCoins: number;
+    bloCoins: number;
+  };
+
+  @Prop({ type: Object })
+  settings: {
+    account: {
+      phone?: string;
+      language: string;
+      timezone: string;
+      twoFactorEnabled: boolean;
+    };
+    notifications: {
+      email: boolean;
+      push: boolean;
+      campaigns: boolean;
+      payments: boolean;
+      platform: boolean;
+      marketing: boolean;
+    };
+  };
+
+  @Prop({ type: String, enum: ['user', 'admin', 'moderator'], default: 'user' })
+  role: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 
   async comparePassword(candidatePassword: string): Promise<boolean> {
     return bcrypt.compare(candidatePassword, this.password);

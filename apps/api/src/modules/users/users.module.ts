@@ -9,9 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-    ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MulterModule.register({
       dest: './uploads', // Temporary storage, should be replaced with cloud storage
     }),
@@ -23,6 +21,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService],
+  exports: [UsersService, MongooseModule],
 })
-export class UsersModule {} 
+export class UsersModule {}

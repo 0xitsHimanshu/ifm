@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
 import { CreateAnalyticsDto } from './dto/create-analytics.dto';
@@ -42,40 +51,28 @@ export class AnalyticsController {
   @Post(':campaignId/impression')
   @Roles('user', 'admin')
   @ApiOperation({ summary: 'Track an impression' })
-  trackImpression(
-    @Param('campaignId') campaignId: string,
-    @Body() data: any,
-  ) {
+  trackImpression(@Param('campaignId') campaignId: string, @Body() data: any) {
     return this.analyticsService.trackImpression(campaignId, data);
   }
 
   @Post(':campaignId/click')
   @Roles('user', 'admin')
   @ApiOperation({ summary: 'Track a click' })
-  trackClick(
-    @Param('campaignId') campaignId: string,
-    @Body() data: any,
-  ) {
+  trackClick(@Param('campaignId') campaignId: string, @Body() data: any) {
     return this.analyticsService.trackClick(campaignId, data);
   }
 
   @Post(':campaignId/conversion')
   @Roles('user', 'admin')
   @ApiOperation({ summary: 'Track a conversion' })
-  trackConversion(
-    @Param('campaignId') campaignId: string,
-    @Body() data: any,
-  ) {
+  trackConversion(@Param('campaignId') campaignId: string, @Body() data: any) {
     return this.analyticsService.trackConversion(campaignId, data);
   }
 
   @Post(':campaignId/engagement')
   @Roles('user', 'admin')
   @ApiOperation({ summary: 'Track user engagement' })
-  trackEngagement(
-    @Param('campaignId') campaignId: string,
-    @Body() data: any,
-  ) {
+  trackEngagement(@Param('campaignId') campaignId: string, @Body() data: any) {
     return this.analyticsService.trackEngagement(campaignId, data);
   }
 
@@ -108,4 +105,4 @@ export class AnalyticsController {
   ) {
     return this.analyticsService.updatePerformanceMetrics(campaignId, data);
   }
-} 
+}

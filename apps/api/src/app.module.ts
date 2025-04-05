@@ -11,6 +11,10 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { GroupsModule } from './modules/groups/groups.module';
+import { GeekeysModule } from './modules/geekeys/geekeys.module';
+import { OBSModule } from './modules/obs/obs.module';
+import { EventsGateway } from './gateways/events.gateway';
 
 @Module({
   imports: [
@@ -20,8 +24,10 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27017/ad-campaign',
+      useFactory: (configService: ConfigService) => ({
+        uri:
+          configService.get<string>('MONGODB_URI') ||
+          'mongodb://localhost:27017/ad-campaign',
       }),
       inject: [ConfigService],
     }),
@@ -35,8 +41,11 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     AuthModule,
     WalletModule,
     AnalyticsModule,
+    GroupsModule,
+    GeekeysModule,
+    OBSModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EventsGateway],
 })
 export class AppModule {}

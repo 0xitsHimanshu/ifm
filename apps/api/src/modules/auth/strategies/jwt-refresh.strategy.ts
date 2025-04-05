@@ -7,17 +7,17 @@ import { Model } from 'mongoose';
 import { User } from '../../users/user.schema';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
-    const secret = configService.get<string>('JWT_SECRET');
+    const secret = configService.get<string>('JWT_REFRESH_SECRET');
     if (!secret) {
-      throw new UnauthorizedException('JWT_SECRET is not defined');
+      throw new UnauthorizedException('JWT_REFRESH_SECRET is not defined');
     }
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
       ignoreExpiration: false,
       secretOrKey: secret,
     });

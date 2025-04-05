@@ -1,8 +1,8 @@
-import { 
-  Injectable, 
-  UnauthorizedException, 
-  NotFoundException, 
-  ConflictException 
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -23,7 +23,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.userModel.findOne({ email: createUserDto.email }).exec();
+    const existingUser = await this.userModel
+      .findOne({ email: createUserDto.email })
+      .exec();
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -55,7 +57,10 @@ export class UsersService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -82,7 +87,10 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User> {
-    const user = await this.userModel.findOne({ email }).select('-password').exec();
+    const user = await this.userModel
+      .findOne({ email })
+      .select('-password')
+      .exec();
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
@@ -101,7 +109,10 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<User> {
-    const deletedUser = await this.userModel.findByIdAndDelete(id).select('-password').exec();
+    const deletedUser = await this.userModel
+      .findByIdAndDelete(id)
+      .select('-password')
+      .exec();
     if (!deletedUser) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -164,4 +175,4 @@ export class UsersService {
       expiresIn: '24h',
     });
   }
-} 
+}
